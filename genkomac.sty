@@ -1,0 +1,146 @@
+%%---------- genkomac.sty ----------------------------------
+\ProvidesPackage{genkomac}[1999/01/17]
+%% ルビ
+\newcount\@rubykanacount
+\newcount\@rubygokucount
+\newcount\@mojisuu
+\def\@mojikazoe#1{%
+ \@tfor\member:=#1\do{\advance\@mojisuu by 1}}%
+\def\@rubyyomi#1{%
+ \@for\member:=#1\do{%
+  \advance\@rubykanacount by 1
+  \ifnum\@rubykanacount=1\xdef\@rubykanai{\member}\else
+   \ifnum\@rubykanacount=2\xdef\@rubykanaii{\member}\else
+    \ifnum\@rubykanacount=3\xdef\@rubykanaiii{\member}\else
+     \ifnum\@rubykanacount=4\xdef\@rubykanaiv{\member}\else
+      \ifnum\@rubykanacount=5\xdef\@rubykanav{\member}\else
+       \ifnum\@rubykanacount=6\xdef\@rubykanavi{\member}%
+\fi\fi\fi\fi\fi\fi}}%
+\def\@rubygoku#1{%
+ \@tfor\member:=#1\do{%
+  \advance\@rubygokucount by 1
+  \ifnum\@rubygokucount=1\xdef\@rubygokui{\member}\else
+   \ifnum\@rubygokucount=2\xdef\@rubygokuii{\member}\else
+    \ifnum\@rubygokucount=3\xdef\@rubygokuiii{\member}\else
+     \ifnum\@rubygokucount=4\xdef\@rubygokuiv{\member}\else
+      \ifnum\@rubygokucount=5\xdef\@rubygokuv{\member}\else
+       \ifnum\@rubygokucount=6\xdef\@rubygokuvi{\member}%
+\fi\fi\fi\fi\fi\fi}}%
+\def\@rubyi{%
+ {\smash{\vbox{\kanjiskip=0pt\hsize=1zw
+ \hbox to 1zw{{\hss\scriptsize
+ \@rubykanai\hss}}\nointerlineskip\kern.5mm\hbox to 1zw{%
+ \hss\@rubygokui\hss}}}}}%
+\def\@rubyii{%
+ {\smash{\vbox{\kanjiskip=0pt\hsize=1zw
+ \hbox to 1zw{{\hss\scriptsize\@rubykanaii\hss}}\nointerlineskip
+ \kern.5mm\hbox to 1zw{\hss\@rubygokuii\hss}}}}}%
+\def\@rubyiii{%
+ {\smash{\vbox{\kanjiskip=0pt\hsize=1zw
+ \hbox to 1zw{{\hss\scriptsize\@rubykanaiii\hss}}\nointerlineskip
+ \kern.5mm\hbox to 1zw{\hss\@rubygokuiii\hss}}}}}%
+\def\@rubyiv{%
+ {\smash{\vbox{\kanjiskip=0pt\hsize=1zw
+ \hbox to 1zw{{\hss\scriptsize\@rubykanaiv\hss}}\nointerlineskip
+ \kern.5mm\hbox to 1zw{\hss\@rubygokuiv\hss}}}}}%
+\def\@rubyv{%
+ {\smash{\vbox{\kanjiskip=0pt\hsize=1zw
+ \hbox to 1zw{{\hss\scriptsize\@rubykanav\hss}}\nointerlineskip
+ \kern.5mm\hbox to 1zw{\hss\@rubygokuv\hss}}}}}%
+\def\@rubyvi{%
+ {\smash{\vbox{\kanjiskip=0pt\hsize=1zw
+ \hbox to 1zw{{\hss\scriptsize\@rubykanavi\hss}}\nointerlineskip
+ \kern.5mm\hbox to 1zw{\hss\@rubygokuvi\hss}}}}}%
+\def\@tasu{\hspace{\kanjiskip}}
+\def\ruby{\@ifstar\@@ruby\@ruby}
+\def\@@ruby#1#2{%
+ \@mojisuu=0\relax
+ \@rubykanacount=0\relax
+ \@rubygokucount=0\relax
+ \@mojikazoe{#1}%
+ \@rubyyomi{#2}%
+ \@rubygoku{#1}%
+ \leavevmode
+ \@rubyi\@tasu\ifnum\@mojisuu>1\@rubyii\@tasu
+ \ifnum\@mojisuu>2\@rubyiii\@tasu\ifnum\@mojisuu>3\@rubyiv\@tasu
+ \ifnum\@mojisuu>4\@rubyv\@tasu\ifnum\@mojisuu>5\@rubyvi\@tasu
+ \ifnum\@mojisuu>6\message{注意！ルビは一度に６文字までです。^^J
+ 文章が失われます。続けてルビを振る場合は^^J
+ \backslash ruby* を使ってください。}\fi\fi\fi\fi\fi\fi}
+\def\@ruby#1#2{\@tasu\@@ruby{#1}{#2}}
+%% fake な見出しの定義
+\newcounter{part}\setcounter{part}{0}
+\newcounter{chapter}\setcounter{chapter}{0}
+\newcounter{section}\setcounter{section}{0}
+\newcounter{subsection}\setcounter{subsection}{0}
+\def\@@全角数字#1{%
+  \ifcase#1\unskip\or １\or ２\or ３\or ４\or ５\or%
+                      ６\or ７\or ８\or ９\else%
+                      \@clerr\fi\relax}%
+\newlength{\@hindent}
+\def\@全角数字#1{%
+  \@@全角数字{\@nameuse{c@#1}}}%
+\def\part#1{{\parindent\z@\refstepcounter{part}\clearpage
+  \settowidth{\@hindent}{第\@全角数字{part}部　\hspace{\kanjiskip}}%
+  第\@全角数字{part}部　\hangindent\@hindent#1\clearpage}}%
+\def\chapter#1{{\parindent\z@\refstepcounter{chapter}\clearpage
+  \settowidth{\@hindent}{第\@全角数字{chapter}章　\hspace{\kanjiskip}}%
+  第\@全角数字{chapter}章　\hangindent\@hindent#1\nopagebreak\par
+  \setcounter{section}{0}}}%
+\def\section#1{{\parindent\z@\refstepcounter{section}\par
+  \settowidth{\@hindent}{\@全角数字{section}　\hspace{\kanjiskip}}%
+  \@全角数字{section}　\hangindent\@hindent#1\nopagebreak\par
+  \setcounter{subsection}{0}}}%
+\def\subsection#1{{\parindent\z@\refstepcounter{subsection}\par
+  \settowidth{\@hindent}{\@全角数字{section}・\@全角数字{subsection}%
+  　\hspace{\kanjiskip}}%
+  \@全角数字{section}・\@全角数字{subsection}　\hangindent\@hindent#1
+  \nopagebreak\par}}%
+\def\subsubsection#1{%
+  \settowidth{\@hindent}{　\hspace{\kanjiskip}}%
+  \par\hangindent\h@indent#1\nopagebreak\par}%
+\newcounter{gencount}
+%% fake な enumerate 環境
+\renewenvironment{enumerate}{%
+ \begin{list}{%
+ \iftdir\hfil\kanji\arabic{gencount}、 \else
+ \hfil\arabic{gencount}.\fi}{%
+ \topsep=0mm \partopsep=0mm \parsep=0mm
+ \itemsep=0mm \rightmargin=0mm \itemindent=0mm
+ \iftdir \labelsep=.2zw \labelwidth=4.95zw\else
+ \labelsep=.5zw\labelwidth=3.5zw\fi
+ \leftmargin=\labelwidth \listparindent=0mm
+ \usecounter{gencount}
+}}{\end{list}}
+% fake な itemize 環境
+\renewenvironment{itemize}{%
+ \begin{list}{\hfil \textbullet\hfil}{%
+ \iftdir \leftmargin3.3zw \else \leftmargin3.5zw\fi
+ \labelwidth\leftmargin \topsep=0pt \parsep0pt
+ \labelsep0pt\itemindent0pt}}{\end{list}}
+\def\kajogaki{\@ifnextchar[{\@kajogaki}{%
+ \@kajogaki[無指定五字]}}
+\def\@kajogaki[#1]{%
+ \list{}{%
+ \let\makelabel\kajogakilabel\settowidth{\labelwidth}{#1}%
+ \setlength{\topsep}{0pt}\setlength{\partopsep}{0pt}%
+ \setlength{\parsep}{0pt}\setlength{\labelsep}{1zw}%
+ \addtolength{\labelsep}{2\kanjiskip}%
+ \setlength{\leftmargin}{\labelwidth}\addtolength{\leftmargin}{1zw}%
+ \addtolength{\leftmargin}{2\kanjiskip}
+ \setlength{\itemsep}{0pt}\setlength{\itemindent}{0pt}}}%
+\let\endkajogaki\endlist
+\def\kajogakilabel#1{\bfseries#1\hfill\inhibitglue}%
+\def\一字下げ{\parindent=1zw\advance\parindent by \kanjiskip}%
+\def\空行{\vspace{\baselineskip}\par}%
+\newskip\@@waouskip
+\@@waouskip=\z@ plus 1fill\relax
+\def\@waouskip{\hspace\@@waouskip}
+\def\@maeaki{\hspace{\KANJISKIP}\@waouskip}
+\def\@usiroaki{\hspace{\KANJISKIP}\@waouskip}
+\def\oubun#1{%
+ \if@kinsoku
+ \@maeaki#1\@usiroaki\else
+ \hspace{\kanjiskip}#1\hspace{\kanjiskip}\fi}
+\endinput
+%% end of genkomac.sty
